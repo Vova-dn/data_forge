@@ -18,10 +18,8 @@ class DatasetFactory extends Factory
     public function definition(): array
     {
         return [
-            'external_id' => fake()->unique()->numerify('###'),
-            'email'=> fake()->unique()->safeEmail(),
-            'full_name'=> fake()->unique()->name(),
-            'country_code' => strtoupper(fake()->lexify(str_repeat('?', 2))),
+            'users_name' => $this->faker->name(),
+            'path' => $this->faker->name(),
 
         ];
     }

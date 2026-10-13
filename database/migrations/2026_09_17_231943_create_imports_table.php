@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('source_system');
             $table->string('schema_version');
             $table->string('filename');
-            $table->string('size');
+            $table->unsignedBigInteger('size');
             $table->char('checksum', 64);
             $table->string('immutable_source_key');
             $table->string('state');

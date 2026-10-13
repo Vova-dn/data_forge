@@ -15,11 +15,8 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('owner_id')->constrained('users');
-            $table->integer('external_id');
-            $table->string('email');
-            $table->string('full_name');
-            $table->string('country_code');
-            $table->integer('company_id')->nullable();
+            $table->string('users_name');
+            $table->string('path');
         });
     }
 

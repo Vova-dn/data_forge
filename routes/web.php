@@ -15,3 +15,5 @@ Route::get('/home', function () {
 })->name('home')->middleware('auth');
 
 Route::get('/datasets/{id}', [DatasetController::class, 'getDatasets']);
+
+Route::post('/datasets', [DatasetController::class, 'postDatasets']);

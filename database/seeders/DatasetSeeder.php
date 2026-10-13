@@ -15,20 +15,14 @@ class DatasetSeeder extends Seeder
     {
         Dataset::create([
             'owner_id' => 1,
-            'external_id' => 1,
-            'email' => 'akvar@gmail.com',
-            'full_name' => 'Akvar',
-            'country_code' => 'US',
-            'company_id' => 1,
+            'users_name' => '1234.csv',
+            'path' => '/usr/local/bin/csv',
 
         ]);
         Dataset::create([
             'owner_id' => 2,
-            'external_id' => 2,
-            'email' => 'akvar123@gmail.com',
-            'full_name' => 'Akvar123',
-            'country_code' => 'PL',
-            'company_id' => 2,
+            'users_name' => '12222.csv',
+            'path' => '/usr/local/bin/csv',
         ]);
     }
 }
