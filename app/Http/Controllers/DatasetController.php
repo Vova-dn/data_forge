@@ -24,11 +24,11 @@ class DatasetController extends Controller
     }
 
     public function postDatasets(Request $request){
-        $request->validate(['required', 'file', 'mimes:csv,txt', 'max:524288']);
+        $request->validate(['file' => ['required', 'file', 'mimes:csv,txt', 'max:524288']]);
         $file = $request->file('file');
         $path = $file->store('datasets', 'local');
         if ($path === false) {
-            return response()->json(['error' => 'File could not be uploaded.'], 500);
+            return response()->json(['error' => 'File could not be uploaded.'], 302);
         }
 
         try {

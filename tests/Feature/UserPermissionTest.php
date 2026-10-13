@@ -18,7 +18,7 @@ class UserPermissionTest extends TestCase
     {
         $owner = User::factory()->create();
         $dataset = Dataset::factory()->create([
-           'owner_id' => 1
+           'owner_id' => $owner->id
         ]);
 
         $response = $this->actingAs($owner)->get('/datasets/' . $dataset->id);

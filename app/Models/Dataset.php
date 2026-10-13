@@ -13,6 +13,8 @@ class Dataset extends Model
 {
     use HasFactory, Notifiable;
 
+    protected $fillable = ['owner_id', 'users_name', 'path'];
+
     public function user(): belongsTo
     {
         return $this->belongsTo(User::class);
