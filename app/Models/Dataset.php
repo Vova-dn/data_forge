@@ -27,7 +27,7 @@ class Dataset extends Model
 
     public function importRuns(): HasMany
     {
-        return $this->hasMany(Import_Run::class);
+        return $this->hasMany(ImportRun::class);
     }
 
     public function customers(): HasMany

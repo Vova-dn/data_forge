@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('import_id')->constrained('imports');
             $table->integer('row_number');
             $table->string('chunk');
-            $table->string('normalized_payload');
-            $table->string('business_key');
-            $table->char('source_hash');
-            $table->integer('candidate_row_id');
+            $table->json('normalized_payload')->nullable();
+            $table->string('business_key')->nullable();
+            $table->char('source_hash')->nullable();
+            $table->integer('candidate_row_id')->nullable();
             $table->string('outcome');
             $table->timestamps();
 

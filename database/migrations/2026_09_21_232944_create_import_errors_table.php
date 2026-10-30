@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('import_id')->nullable()->constrained('imports');
             $table->timestamps();
             $table->string('field');
-            $table->integer('code');
+            $table->string('code');
             $table->string('message');
             $table->string('bounded_safe_excerpt');
         });

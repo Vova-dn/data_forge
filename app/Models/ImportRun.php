@@ -7,12 +7,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 
-class Import_Run extends Model
+class ImportRun extends Model
 {
     public function import(): BelongsTo
     {
         return $this->belongsTo(Import::class);
     }
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'import_id',
+        'dataset_id',
+        'run_no',
+        'state',
+    ];
 
     public function dataset(): BelongsTo
     {
@@ -21,7 +30,7 @@ class Import_Run extends Model
 
     public function chunks(): HasMany
     {
-        return $this->hasMany(Import_Chunk::class);
+        return $this->hasMany(ImportChunk::class);
     }
 
 }

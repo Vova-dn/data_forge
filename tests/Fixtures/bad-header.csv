@@ -1,0 +1,4 @@
+customer_id,email,full_name,country_code,company_id
+  b-001  ,  B001@EXAMPLE.TEST  ,  Sample   Customer 001  ,pl,
+b-002,b002@example.test,"Sample, Customer 002",PL,
+b-003,b003@example.test,Тестовый Клиент 003,PL,

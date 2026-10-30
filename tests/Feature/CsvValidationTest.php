@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -19,6 +20,7 @@ class CsvValidationTest extends TestCase
     use RefreshDatabase;
     public function test_csv_received_successful(): void
     {
+        Queue::fake();
         $owner = User::factory()->create();
         $file = UploadedFile::fake()->createWithContent('test.csv', 'x');
         $response = $this->actingAs($owner)->post('/datasets', ['file' => $file]);
@@ -29,6 +31,7 @@ class CsvValidationTest extends TestCase
     }
     public function test_txt_received_successful(): void
     {
+        Queue::fake();
         $owner = User::factory()->create();
         $file = UploadedFile::fake()->createWithContent('test.txt', 'x');
         $response = $this->actingAs($owner)->post('/datasets', ['file' => $file]);
@@ -38,6 +41,7 @@ class CsvValidationTest extends TestCase
     }
     public function test_anotherFormat_received_failure(): void
     {
+        Queue::fake();
         $owner = User::factory()->create();
         $file = UploadedFile::fake()->createWithContent('test.doc', 'x');
         $response = $this->actingAs($owner)->post('/datasets', ['file' => $file]);
@@ -45,6 +49,7 @@ class CsvValidationTest extends TestCase
     }
     public function test_save_file_correctly(): void
     {
+        Queue::fake();
         Storage::fake('local');
         $owner = User::factory()->create();
         $file = UploadedFile::fake()->createWithContent('test.txt', 'x');
@@ -58,6 +63,7 @@ class CsvValidationTest extends TestCase
     }
     public function test_transaction_fail_mechanism(): void
     {
+        Queue::fake();
         $owner = User::factory()->create();
         Storage::fake('local');
 

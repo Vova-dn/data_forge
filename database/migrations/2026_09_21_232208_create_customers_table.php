@@ -16,9 +16,13 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('dataset_id')->constrained('datasets');
             $table->string('source_system');
-            $table->integer('external_id');
+
             $table->char('source_hash');
-            $table->string('normalized_fields');
+            $table->string('external_id');
+            $table->string('email');
+            $table->string('full_name');
+            $table->string('country_code');
+            $table->string('company_id');
             $table->string('enrichment');
             $table->integer('origin_import_id');
 

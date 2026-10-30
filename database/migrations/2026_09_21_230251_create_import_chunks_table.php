@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('lease_until');
             $table->uuid('lease_token');
             $table->integer('attempts');
-            $table->string('summary');
+            $table->json('summary')->nullable();
 
             $table->unique(['run_id', 'phase', 'chunk_index']);
 

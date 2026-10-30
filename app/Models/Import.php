@@ -14,17 +14,17 @@ class Import extends Model
     }
     public function importRuns(): HasMany
     {
-        return $this->hasMany(Import_Run::class);
+        return $this->hasMany(ImportRun::class);
     }
 
     public function importRows(): HasMany
     {
-        return $this->hasMany(Import_Row::class);
+        return $this->hasMany(ImportRow::class);
     }
 
     public function importErrors(): HasMany
     {
-        return $this->hasMany(Import_Error::class);
+        return $this->hasMany(ImportError::class);
     }
 
     public function exports(): HasMany

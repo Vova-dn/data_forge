@@ -4,16 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Import_Error extends Model
+class ImportRow extends Model
 {
     public function import(): BelongsTo
     {
         return $this->belongsTo(Import::class);
     }
 
-    public function importRow(): BelongsTo
+    public function importErrors(): HasMany
     {
-        return $this->belongsTo(Import_Row::class);
+        return $this->hasMany(ImportError::class);
     }
 }
