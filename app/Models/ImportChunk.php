@@ -20,6 +20,8 @@ class ImportChunk extends Model
         'phase',
         'chunk_index',
         'state',
+        'lease_until',
+        'lease_token',
         'attempts',
         'summary',
     ];

@@ -6,6 +6,7 @@ use App\Jobs\ProcessDataset;
 use App\Models\Dataset;
 use App\Models\Import;
 use App\Models\ImportChunk;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -21,15 +22,17 @@ class DataValidateTest extends TestCase
 
     public function test_job_validation_valid_file(): void
     {
-
+        $owner = User::factory()->create();
         Storage::fake('local');
-        Storage::disk('local')->put('datasets/valid.csv', file_get_contents('/var/www/html/tests/Fixtures/valid.csv'));
         $file = UploadedFile::fake()->createWithContent(
             'valid.csv',
-            file_get_contents(base_path('datasets/valid.csv'))
+            file_get_contents(base_path('tests/Fixtures/valid.csv')),
         );
+        $key = Storage::disk('local')->putFile('datasets', $file);
+        //Storage::disk('local')->put('datasets/valid.csv', file_get_contents('/var/www/html/tests/Fixtures/valid.csv'));
+
         $dataset = Dataset::create([
-            'owner_id' => 1,
+            'owner_id' => $owner->id,
             'users_name' => 'valid.csv',
             'path' => 'datasets/valid.csv',
         ]);
@@ -37,10 +40,10 @@ class DataValidateTest extends TestCase
             'dataset_id' => $dataset->id,
             'source_system' => 'users',
             'schema_version' => '1',
-            'filename' => $file->getClientOriginalName(),
-            'size' => $file->getSize(),
-            'checksum' => hash_file('sha256', $file->getRealPath()),
-            'immutable_source_key' => $file->getRealPath(),
+            'filename' => 'valid.csv',
+            'size' => Storage::disk('local')->size($key),
+            'checksum' => hash_file('sha256', Storage::disk('local')->path($key)),
+            'immutable_source_key' => $key,
             'state' => 'received',
         ]);
 

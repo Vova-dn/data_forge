@@ -8,6 +8,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Import extends Model
 {
+    protected $fillable = [
+        'dataset_id',
+        'source_system',
+        'schema_version',
+        'filename',
+        'size',
+        'checksum',
+        'immutable_source_key',
+        'state'
+    ];
     public function dataset(): BelongsTo
     {
         return $this->belongsTo(Dataset::class);

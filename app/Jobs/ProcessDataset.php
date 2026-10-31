@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use SplFileObject;
 
 class ProcessDataset implements ShouldQueue
@@ -39,6 +40,8 @@ class ProcessDataset implements ShouldQueue
         $import_chunk = ImportChunk::create([
             'run_id' => $import_run->id,
             'phase' => 'validate',
+            'lease_until' => now()->addMinutes(10),
+            'lease_token' => (string) Str::uuid(),
             'chunk_index' => 1,
             'state' => 'processing',
             'attempts' => 1,
@@ -52,7 +55,7 @@ class ProcessDataset implements ShouldQueue
             | SplFileObject::DROP_NEW_LINE
             );
 
-        $csv->setCsvControl(',' , '"', '//');
+        $csv->setCsvControl(',' , '"', '');
 
         $isHeader = true;
         $rowNumber = 0;
@@ -135,6 +138,7 @@ class ProcessDataset implements ShouldQueue
             }
 
         }
+
         $duplicates = count($rows) - count(array_unique($rows));
         $rows = array_unique($rows);
         DB::transaction(function () use ($errors, $rows){
