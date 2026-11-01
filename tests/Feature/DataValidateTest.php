@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class DataValidateTest extends TestCase
@@ -20,13 +21,51 @@ class DataValidateTest extends TestCase
      */
     use RefreshDatabase;
 
-    public function test_job_validation_valid_file(): void
+    public static function importCases(): array
+    {
+        return [
+            'valid file' => [
+                'valid.csv',
+                100, //accepted
+                0,  //rejected
+                0,  //duplicated
+                0, //failed
+                '0', //errors
+            ],
+            'mixed file' => [
+                'mixed.csv',
+                90,
+                10,
+                0,
+                0,
+                '0', //errors
+            ],
+            'bad header' => [
+                'bad-header.csv',
+                0,
+                0,
+                0,
+                0,
+                'bad header',
+            ]
+        ];
+    }
+
+    #[DataProvider('importCases')]
+    public function test_job_validation_files(
+        string $filename,
+        int $accepted,
+        int $rejected,
+        int $duplicated,
+        int $failed,
+        string $errors
+    ): void
     {
         $owner = User::factory()->create();
         Storage::fake('local');
         $file = UploadedFile::fake()->createWithContent(
-            'valid.csv',
-            file_get_contents(base_path('tests/Fixtures/valid.csv')),
+            $filename,
+            file_get_contents(base_path("tests/Fixtures/{$filename}")),
         );
         $key = Storage::disk('local')->putFile('datasets', $file);
         //Storage::disk('local')->put('datasets/valid.csv', file_get_contents('/var/www/html/tests/Fixtures/valid.csv'));
@@ -51,16 +90,14 @@ class DataValidateTest extends TestCase
 
         $chunk = ImportChunk::firstOrFail();
         $this->assertSame([
-            'accepted' => 100,
-            'rejected' => 0,
-            'duplicated' => 0,
-            'failed' => 0,
+            'accepted' => $accepted,
+            'rejected' => $rejected,
+            'duplicated' => $duplicated,
+            'failed' => $failed,
+            'errors' => $errors,
             ], $chunk->summary);
-
-
-
-
-
-
     }
+
+
+
 }

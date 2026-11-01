@@ -58,20 +58,33 @@ class ProcessDataset implements ShouldQueue
         $csv->setCsvControl(',' , '"', '');
 
         $isHeader = true;
+        $HeaderError = false;
         $rowNumber = 0;
         $rows = [];
         $errors = [];
-        $failed = 0;
+        $rejected = 0;
         $duplicates = 0;
         foreach ($csv as $row) {
             $rowNumber++;
-            if ($isHeader) {
-                $isHeader = false;
-                continue;
+            if($isHeader) {
+                if($row[0] == 'external_id' && $row[1] == 'email' && $row[2] == 'full_name' && $row[3] == 'country_code' && $row[4] == 'company_id') {
+                    $isHeader = false;
+                    continue;
+                }
+                else{
+                    $import_chunk->summary = [
+                        'accepted' => 0,
+                        'rejected' => 0,
+                        'duplicated' => 0,
+                        'failed' => 0,
+                        'errors'=> 'bad header',
+                    ];
+                    $import_chunk->save();
+                    break;
+                }
             }
 
             if ($row === null || $row === false) {
-                $failed++;
                 continue;
             }
 
@@ -97,7 +110,7 @@ class ProcessDataset implements ShouldQueue
             ]);
 
             if($validator->fails()) {
-                $failed++;
+                $rejected++;
                 continue;
             }
             $isValid = $validator->passes();
@@ -106,7 +119,7 @@ class ProcessDataset implements ShouldQueue
             $rows[] = [
                 'import_id' => $import->id,
                 'row_number' => $rowNumber,
-                'chunk' => $import_run->chunk_index,
+                'chunk' => $import_chunk->chunk_index,
                 'normalized_payload' => $isValid
                     ? json_encode($validator->validated(), JSON_UNESCAPED_UNICODE)
                     : null,
@@ -138,9 +151,12 @@ class ProcessDataset implements ShouldQueue
             }
 
         }
-
-        $duplicates = count($rows) - count(array_unique($rows));
-        $rows = array_unique($rows);
+        $unique = [];
+        foreach($rows as $row){
+            $unique[json_encode($row)] = $row;
+        }
+        $duplicates = count($rows) - count($unique);
+        $rows = array_values($unique);
         DB::transaction(function () use ($errors, $rows){
            DB::table('import_rows')->upsert($rows, ['import_id', 'row_number'],
            [
@@ -156,13 +172,16 @@ class ProcessDataset implements ShouldQueue
                DB::table('import_rows')->insert($errors);
            }
         });
-        $import_chunk->summary = [
-            'accepted' => count($rows),
-            'rejected' => count($errors),
-            'duplicated' => $duplicates,
-            'failed' => $failed,
+        if($isHeader === false) {
+            $import_chunk->summary = [
+                'accepted' => count($rows),
+                'rejected' => $rejected,
+                'duplicated' => $duplicates,
+                'failed' => count($errors),
+                'errors' => '0',
             ];
-        $import_chunk->save();
+            $import_chunk->save();
+        }
 
 
 
